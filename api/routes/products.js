@@ -7,9 +7,22 @@ const router = express.Router();
 
 router.get('/', (request, response, next) => {
     Product.find()
-        .then(products => response.status(200).json({
-            products
-        }))
+        .select('name price _id')
+        .then(products => {
+            const res = {
+                count: products.length,
+                products: products.map(product => ({
+                    name: product.name,
+                    _id: product._id,
+                    price: product.price,
+                    request: {
+                        type: 'GET',
+                        url: `http://localhost:3000/products/${product._id}`
+                    }
+                }))
+            };
+            response.status(200).json(res);
+        })
         .catch(error => response.status(500).json({
             error
         }));
@@ -23,10 +36,17 @@ router.post('/', (request, response, next) => {
     });
     product.save()
     .then(res => {
-        console.log(res);
-        response.status(201).send({
-            message: 'Handling POST requests from to /products',
-            createdProduct: res
+        response.status(201).json({
+            message: 'Created product successfully',
+            createdProduct: {
+                name: res.name,
+                price: res.price,
+                _id: res._id,
+                request: {
+                    type: 'GET',
+                    url: `http://localhost:3000/products/${res._id}`
+                }
+            }
         });
     })
     .catch(error => {
@@ -43,7 +63,11 @@ router.get('/:productId', (request, response, next) => {
         .then(product => {
             if (product)
                 response.status(200).json({
-                    product
+                    product,
+                    request: {
+                        type: 'GET',
+                        url: 'http://localhost:3000/products'
+                    }
                 });
             else
                 response.status(404).json({
@@ -67,7 +91,13 @@ router.patch('/:productId', (request, response, next) => {
     }, {
         new: true
     })
-        .then(product => response.status(200).json({ product }))
+        .then(product => response.status(200).json({
+            product,
+            request: {
+                type: 'GET',
+                url: `http:localhost:3000/products/${product._id}`
+            }
+        }))
         .catch(error => response.status(404).json({ error}));
 });
 

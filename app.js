@@ -9,6 +9,7 @@ mongoose.connect(`mongodb+srv://qausim:${process.env.MONGO_ATLAS_PW}@node-rest-s
     // useMongoClient: true,
     useNewUrlParser: true
 });
+mongoose.Promise = global.Promise;
 
 const app = express();
 app.use(morgan('dev'));
