@@ -1,13 +1,8 @@
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
 const productRoutes = require('./api/routes/products');
 const ordersRoutes = require('./api/routes/orders');
-
-mongoose.connect(`mongodb+srv://qausim:${process.env.MONGO_ATLAS_PW}@node-rest-shop-a15mm.mongodb.net/test?retryWrites=true`, {
-    useMongoClient: true
-});
 
 const app = express();
 app.use(morgan('dev'));
