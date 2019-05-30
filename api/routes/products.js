@@ -1,13 +1,44 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const Product = require('../models/product');
+const multer = require('multer');
+
+
+const storage = multer.diskStorage({
+    destination: function(request, file, clbk) {
+        clbk(null, './uploads/');
+    },
+    filename: function(request, file, clbk) {
+        clbk(null, new Date().getTime() + ' ' + file.originalname);
+    }
+});
+
+const fileFilter = (request, file, clbk) => {
+    switch (file.mimetype) {
+        case 'image/jpg':
+        case 'image/jpeg':
+        case 'image/png':
+            clbk(null, true);
+            break;
+        default:
+            clbk(null, false);
+    }
+};
+
+// const upload = multer({dest: 'uploads/'});
+const upload = multer({ storage,
+    limits: {
+        fileSize: 1024 * 1024 * 5, // 5MB
+    },
+    fileFilter: fileFilter
+});
 
 // Initialize express router
 const router = express.Router();
 
 router.get('/', (request, response, next) => {
     Product.find()
-        .select('name price _id')
+        .select('name price _id productImage')
         .then(products => {
             const res = {
                 count: products.length,
@@ -15,6 +46,7 @@ router.get('/', (request, response, next) => {
                     name: product.name,
                     _id: product._id,
                     price: product.price,
+                    productImage: product.productImage,
                     request: {
                         type: 'GET',
                         url: `http://localhost:3000/products/${product._id}`
@@ -28,11 +60,13 @@ router.get('/', (request, response, next) => {
         }));
 });
 
-router.post('/', (request, response, next) => {
+router.post('/', upload.single('productImage'), (request, response, next) => {
+    // console.log(request.file);
     const product = new Product({
         _id: new mongoose.Types.ObjectId(),
         name: request.body.name,
-        price: request.body.price
+        price: request.body.price,
+        productImage: request.file.path.replace(/[\\]/g, '/')
     });
     product.save()
     .then(res => {
@@ -42,6 +76,7 @@ router.post('/', (request, response, next) => {
                 name: res.name,
                 price: res.price,
                 _id: res._id,
+                productImage: res.productImage,
                 request: {
                     type: 'GET',
                     url: `http://localhost:3000/products/${res._id}`

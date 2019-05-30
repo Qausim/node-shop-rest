@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
@@ -12,6 +13,8 @@ mongoose.connect(`mongodb+srv://qausim:${process.env.MONGO_ATLAS_PW}@node-rest-s
 mongoose.Promise = global.Promise;
 
 const app = express();
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
