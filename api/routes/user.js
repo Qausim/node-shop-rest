@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
+const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 
@@ -46,8 +47,39 @@ router.post('/signup', (request, response, next) => {
         }));
 });
 
-router.post('/signin', (request, response, next) => {
-
+router.post('/login', (request, response, next) => {
+    const authError = new Error();
+    authError.status = 401;
+    authError.message = 'Auth failed';
+    
+    User.find({ email: request.body.email })
+        .then(users => {
+            if (!users.length) {
+                throw authError;
+            }
+            bcrypt.compare(request.body.password, users[0].password, (err, result) => {
+                if (result) {// true if successfule else false
+                    const token = jwt.sign({
+                        email: users[0].email,
+                        userId: users[0]._id
+                    },
+                    process.env.JWT_KEY,
+                    {
+                        expiresIn: '1h'
+                    })
+                    return response.status(200).json({
+                        message: 'Authentication successful',
+                        token
+                    });
+                }
+                return response.status(authError.status).json({
+                    error: authError
+                });
+            });
+        })
+        .catch(error => response.status(error.status).json({
+            error
+        }));
 });
 
 router.delete('/:id', (request, response, next) => {
