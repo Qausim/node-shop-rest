@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const productRoutes = require('./api/routes/products');
 const ordersRoutes = require('./api/routes/orders');
+const userRoutes = require('./api/routes/user');
 const mongoose = require('mongoose');
 
 mongoose.connect(`mongodb+srv://qausim:${process.env.MONGO_ATLAS_PW}@node-rest-shop-a15mm.mongodb.net/test?retryWrites=true`, {
@@ -32,6 +33,7 @@ app.use((request, response, next) => {
 
 app.use('/products', productRoutes);
 app.use('/orders', ordersRoutes);
+app.use('/users', userRoutes);
 
 
 // handles every requests to a URL not specified by
