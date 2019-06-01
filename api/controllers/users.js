@@ -14,8 +14,9 @@ exports.signUpUser = (request, response, next) => {
             } else {
                 bcrypt.hash(request.body.password, 10, (error, hash) => {
                     if (error) {
-                        error.status = 500;
-                        throw error;
+                        response.status(500).json({
+                            error
+                        });
                     } else {
                         const user = new User({
                             _id: new mongoose.Types.ObjectId(),

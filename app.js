@@ -16,11 +16,12 @@ mongoose.Promise = global.Promise;
 const app = express();
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// app.use('/', express.static(path.join(__dirname, 'frontend')));
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use((request, response, next) => {
-    response.header('Access-Control-Allow', '*'); // giving access to all
+    response.header('Access-Control-Allow-Origin', '*'); // giving access to all
     response.header('Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept, Authorization');
     if (request.method === 'OPTIONS') {

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Shop</title>
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+    <div class="wrapper">
+        <form action="http://localhost:3000/users/signin">
+            <div class="inputs" id="email">
+                <p class="error-msg" id="email-error-msg">Invalid or empty fields</p>
+                <label for="email">Email: </label>
+                <input type="email" name="email">
+            </div>
+            <div class="inputs" id="password">
+                    <p class="error-msg" id="password-error-msg">Invalid or empty fields</p>
+                <label for="password">Password: </label>
+                <input type="password" name="password">
+            </div>
+            <div class="buttons">
+                <input type="button" name="login" value="log in">
+                <input type="button" name="signup" value="sign up">
+            </div>
+        </form>
+    </div>
+</body>
+<script src="js/login.js"></script>
+</html>
